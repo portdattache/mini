@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:20:10 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 14:14:18 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:25:41 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ int	main(int ac, char **av, char **env)
 	data.env = init_env_list(env);
 	data.export = init_export_list(env);
 	init_signal();
-	disable_echoctl();
 	read_prompt(&data);
 	free_env_list(data.env);
 	free_env_list(data.export);
