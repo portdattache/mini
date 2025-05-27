@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:20:24 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 14:13:04 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 17:12:12 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,8 +225,8 @@ void							is_a_directory(char *str);
 int								set_fd_cloexec(int fd);
 
 // heredoc
-void							made_new_file(int *fd, char **name);
-void							fill_here_doc_file(int fd, char *delimitor);
+void							made_new_file(char **name);
+void							fill_here_doc_file(char *delimitor, char *file);
 char							*get_here_doc(char *str);
 void							handle_sigint(int sig);
 void							reset_signals_child(void);

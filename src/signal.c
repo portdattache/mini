@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:45:06 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 14:25:42 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:39:45 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,19 @@
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	g_status = 130;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	if (rl_done == 0) // readline actif
+	{
+		g_status = 1;
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	else // hors readline (exécution)
+	{
+		g_status = 2;
+		write(1, "\n", 1);
+	}
 }
 
 void	init_signal(void)

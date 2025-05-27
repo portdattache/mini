@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 14:13:50 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 13:07:47 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:11:55 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,6 @@ int	parse(t_data *data)
 		return (1);
 	if (valid_parse(data) == 1)
 		return (1);
-	print_cmds(data->cmd_list);
+	// print_cmds(data->cmd_list);
 	return (0);
 }
