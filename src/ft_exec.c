@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:09:23 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 13:07:40 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:08:03 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,9 @@ int	ft_shell(t_data *data, t_cmd *cmd, int stdin, int stdout, int prev_fd)
 		return (ft_putstr_fd("fork failed\n", 2), 1);
 	if (pid == 0)
 		exec_child_process(data, cmd, stdin, stdout, prev_fd);
+	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
+	signal(SIGINT, handle_sigint);
 	if (WIFSIGNALED(status))
 		g_status = 128 + WTERMSIG(status);
 	else

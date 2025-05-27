@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:20:24 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 10:34:17 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 14:13:04 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <termios.h>
 # include <unistd.h>
 # define SUCCESS 0
 # define FAIL 1
@@ -227,5 +228,7 @@ int								set_fd_cloexec(int fd);
 void							made_new_file(int *fd, char **name);
 void							fill_here_doc_file(int fd, char *delimitor);
 char							*get_here_doc(char *str);
+void							handle_sigint(int sig);
+void							reset_signals_child(void);
 
 #endif
