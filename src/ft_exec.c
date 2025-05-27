@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:09:23 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 16:04:30 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:10:35 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	exec_child_process(t_data *data, t_cmd *cmd, int stdin, int stdout,
 	char	*path;
 
 	reset_signals_child();
-	signal(SIGPIPE, SIG_IGN);
+	// signal(SIGPIPE, SIG_IGN);
 	args = cmd->args;
 	path = get_cmd_path(data, args);
 	if (redirect_management(cmd, prev_fd) == -1)

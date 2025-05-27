@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:45:06 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 16:39:45 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:58:58 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,12 @@ void	handle_sigint(int sig)
 		g_status = 2;
 		write(1, "\n", 1);
 	}
+}
+void	handle_sigint_heredoc(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	exit(130); // Le fils se termine immédiatement
 }
 
 void	init_signal(void)

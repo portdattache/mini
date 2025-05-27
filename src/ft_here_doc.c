@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 19:49:33 by garside           #+#    #+#             */
-/*   Updated: 2025/05/27 17:09:46 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:55:18 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,61 +23,77 @@ void	made_new_file(char **name)
 	nb_file++;
 }
 
-void	fill_here_doc_file(char *delimitor, char *file)
+void	fill_here_doc_file(delimitor, file_name)
 {
-	char	*str;
-	int		fd;
+	pid_t	pid;
+	int		status;
 
-	fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		return ;
-	signal(SIGINT, handle_sigint);
-	g_status = 0;
-	while (1)
+	pid = fork();
+	if (pid == 0)
 	{
-		str = readline("> ");
-		if (g_status == 130)
-		{
-			free(str);
-			close(fd);
-			unlink(file);
-			return ;
-		}
-		if (str == NULL)
-		{
-			ft_printf("bash: warning: here-document delimited by end-of-file (wanted `%s')\n",
-				delimitor);
-			break ;
-		}
-		if (ft_strcmp(str, delimitor) == 0)
-		{
-			free(str);
-			break ;
-		}
-		ft_putstr_fd(str, fd);
-		ft_putchar_fd('\n', fd);
-		free(str);
+		signal(SIGINT, SIG_DFL); // Laisse Ctrl+C tuer ce processus
+		fill_here_doc_file(delimitor, file_name);
+		free(delimitor);
+		exit(0); // enfant terminé
 	}
-	close(fd);
-	signal(SIGINT, handle_sigint);
+	else if (pid > 0)
+	{
+		waitpid(pid, &status, 0);
+		free(delimitor);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			unlink(file_name);
+			free(file_name);
+			g_status = 130;
+			return (NULL);
+		}
+	}
+	else
+	{
+		perror("fork");
+		free(delimitor);
+		return (NULL);
+	}
 }
 
 char	*get_here_doc(char *str)
 {
-	char *file_name;
-	char *delimitor;
+	char	*file_name;
+	char	*delimitor;
+	pid_t	pid;
+	int		status;
 
 	delimitor = ft_strdup(str);
 	if (!delimitor)
 		return (NULL);
 	made_new_file(&file_name);
-	fill_here_doc_file(delimitor, file_name);
-	free(delimitor);
-	if (g_status == 130)
+	pid = fork();
+	if (pid == -1)
 	{
-		unlink(file_name);
-		free(file_name);
+		perror("fork");
+		free(delimitor);
 		return (NULL);
+	}
+	else if (pid == 0)
+	{
+		// Fils : lecture du heredoc
+		signal(SIGINT, SIG_DFL);
+		fill_here_doc_file(delimitor, file_name);
+		free(delimitor);
+		exit(0);
+	}
+	else
+	{
+		// Père : attente
+		waitpid(pid, &status, 0);
+		free(delimitor);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			unlink(file_name);
+			free(file_name);
+			g_status = 130;
+			return (NULL);
+		}
 	}
 	return (file_name);
 }
