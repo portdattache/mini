@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bcaumont <bcaumont@student.42.fr>          +#+  +:+       +#+        */
+/*   By: garside <garside@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:45:06 by garside           #+#    #+#             */
-/*   Updated: 2025/06/01 21:41:49 by bcaumont         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:56:41 by garside          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,30 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <signal.h>
+
+void	signal_handler_here_doc(int signum)
+{
+	if (signum == SIGINT)
+	{
+		g_status = true;
+		write(1, "\n", 1);
+	}
+}
+
+void	setup_signal_heredoc(void)
+{
+	struct sigaction	sa_sigint;
+	struct sigaction	sa_sigquit;
+
+	sa_sigint.sa_handler = signal_handler_here_doc;
+	sigemptyset(&sa_sigint.sa_mask);
+	sa_sigint.sa_flags = 0;
+	sa_sigquit.sa_handler = SIG_IGN;
+	sigemptyset(&sa_sigquit.sa_mask);
+	sa_sigquit.sa_flags = 0;
+	sigaction(SIGINT, &sa_sigint, NULL);
+	sigaction(SIGQUIT, &sa_sigquit, NULL);
+}
 
 void	handle_sigint(int sig)
 {

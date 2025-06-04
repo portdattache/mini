@@ -6,7 +6,7 @@
 /*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 16:20:24 by garside           #+#    #+#             */
-/*   Updated: 2025/06/03 09:25:19 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/06/05 00:37:05 by broboeuf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_data
 	char						**envp;
 	t_token						*token;
 	t_cmd						*cmd_list;
+	int							last_status;
 	int							token_count;
 }								t_data;
 
@@ -151,16 +152,32 @@ int								handle_single_command(t_data *data, t_cmd *cmd,
 									int prev_fd);
 void							handle_useless_command(t_cmd *cmd,
 									int *prev_fd);
-int								wait_for_children(pid_t last_pid);
+int								wait_for_children(t_data *data, pid_t last_pid);
 void							maybe_close(t_cmd *cmd, int *prev_fd);
 int								exec_line(t_data *data, t_cmd *cmd);
 
 // parse
 void							print_cmds(t_cmd *cmd);
 t_cmd							*parse_tokens(t_data *data);
-void							add_arg(t_cmd *cmd, char *value);
 t_cmd							*new_cmd_node(void);
 void							free_cmd_list(t_data *data);
+
+// parse_utils
+void							add_arg(t_cmd *cmd, char *value);
+int								add_redir(t_redir **redir_list, char *filename,
+									int type, int *skip_next_word);
+int								create_parse(t_token *token, t_cmd **curr,
+									int *skip_next_word);
+int								loop_parse(t_token *token, t_cmd **curr,
+									t_cmd **head, int *skip_next_word);
+t_cmd							*parse_tokens(t_data *data);
+
+// parse_utils1
+void							free_cmd_list2(t_cmd *cmd);
+void							free_redir_list(t_redir *redir);
+void							free_cmd_list(t_data *data);
+t_cmd							*new_cmd_node(void);
+void							add_arg(t_cmd *cmd, char *value);
 
 // exec1
 void							free_data(t_data *data);
@@ -193,6 +210,8 @@ int								ft_echo(t_data *data, t_cmd *cmd);
 int								ft_exit(t_data *data, t_cmd *cmd, int stdin,
 									int stdout);
 int								ft_isalldigit(char *str);
+void							print_cmd_error(char *cmd);
+void							free_name_content(char *name, char *content);
 
 // ryew
 int								ft_executables(t_data *data, t_cmd *cmd,
@@ -224,11 +243,9 @@ void							handle_invalid_command(t_data *data, t_cmd *cmd,
 // ft_pipe2
 void							safe_close(int fd);
 int								redirect_management(t_cmd *cmd, int prev_fd);
+void							exit_d(t_data *data);
 
 // pipe utils
-void							add_redir(t_redir **redir_list, char *filename,
-									int type);
-
 int								open_infile(char *str);
 int								last_infile(t_cmd *cmd);
 int								manag_infile(t_cmd *cmd, int prev_fd);
@@ -246,23 +263,15 @@ int								set_fd_cloexec(int fd);
 
 // heredoc
 void							made_new_file(int *fd, char **name);
-void							fill_here_doc_file(int fd, char *delimitor);
+int								fill_here_doc_file(int fd, char *delimitor);
 char							*get_here_doc(char *str);
 void							handle_sigint(int sig);
 void							reset_signals_child(void);
+void							setup_signal_heredoc(void);
 
-// Utils & remise a la norme
-char							*ft_strjoin_three(char *s1, char *s2, char *s3);
-void							ft_execve_child(t_data *data, t_cmd *cmd,
-									int input_fd, int output_fd);
-void							ft_restore_std(int input_fd, int output_fd);
-void							ft_check_directory(t_data *data, t_cmd *cmd);
-void							ft_exit_with_error(t_data *data, t_cmd *cmd,
-									char *msg, int code);
-// unset
-void							exit_cmd_not_found(t_data *data, t_cmd *cmd,
-									char *arg);
-void							print_cmd_error(char *cmd);
-char							*check_direct_access(char *cmd);
+// term
+// void save_terminal_settings(void);
+// void restore_terminal_settings(void);
+// void set_terminal_non_canonical(void);
 
 #endif

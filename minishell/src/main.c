@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: broboeuf <broboeuf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: garside <garside@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:20:10 by garside           #+#    #+#             */
-/*   Updated: 2025/06/03 13:16:54 by broboeuf         ###   ########.fr       */
+/*   Updated: 2025/06/04 18:57:34 by garside          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,23 +92,23 @@ t_env	*init_export_list(char **env)
 
 void	read_prompt(t_data *data)
 {
+	data->last_status = 0;
 	while (1)
 	{
 		data->token = NULL;
 		data->cmd_list = NULL;
 		data->input = readline("minishell> ");
-		if (!data->input)
+		if (g_status == true)
 		{
-			ft_printf("exit\n");
-			break ;
+			data->last_status = 130;
+			g_status = false;
 		}
-		add_history(data->input);
+		exit_d(data);
 		if (data->input[0] && !check_quotes(data->input))
 		{
+			add_history(data->input);
 			if (parse(data) == 0)
-			{
-				g_status = exec_line(data, data->cmd_list);
-			}
+				data->last_status = exec_line(data, data->cmd_list);
 			if (data->cmd_list)
 				free_cmd_list(data);
 			if (data->token)
@@ -132,5 +132,5 @@ int	main(int ac, char **av, char **env)
 	free_env_list(data.env);
 	free_env_list(data.export);
 	rl_clear_history();
-	return (g_status);
+	return (data.last_status);
 }

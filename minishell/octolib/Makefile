@@ -3,7 +3,7 @@
 # ============================
 
 NAME        = libft.a
-CC          = clang
+CC          = gcc
 CFLAGS      = -Wall -Wextra -Werror -I includes/
 AR          = ar rcs
 RM          = rm -rf
